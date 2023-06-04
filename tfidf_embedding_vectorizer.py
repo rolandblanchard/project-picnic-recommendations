@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import defaultdict
+import numpy as np
 
 class TfidfEmbeddingVectorizer(object):
     def __init__(self, model_cbow):

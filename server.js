@@ -1,36 +1,44 @@
 const express = require("express");
 const { PythonShell } = require("python-shell");
 const app = express();
-const port = 3000; // or any other available port
+const port = 3000;
 
-// Define an API endpoint for receiving input and sending recommendations
-app.get("/recommend", (req, res) => {
-  const ingredients = req.query.ingredients; // Get the input ingredients from the query string
-  console.log("Received request with ingredients:", ingredients);
+app.use(express.json());
 
-  // Set the options for the Python script execution
+// Log incoming requests
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  console.log("Request body:", req.body);
+  next();
+});
+
+app.post("/recommend", (req, res) => {
+  console.log("Received POST request at /recommend");
+
+  const ingredients = req.body.ingredients.join(", ");
+  console.log("Formatted ingredients:", ingredients);
+
   const options = {
-    pythonPath: "python", // Modify the path if needed (e.g., 'python3')
-    scriptPath: ".", // Set the path to the directory containing your Python script
+    pythonPath: "python",
+    scriptPath: ".",
     args: [ingredients],
   };
 
-  // Execute the Python script using PythonShell
-  console.log("Executing Python script...");
+  console.log("Executing Python script with options:", options);
+
   PythonShell.run("recommender_model.py", options, (err, result) => {
     if (err) {
-      console.error("Error occurred while executing Python script:", err);
+      console.error("Python script execution error:", err);
       res.status(500).json({ error: "An error occurred" });
     } else {
       console.log("Python script execution completed successfully");
-      const recommendations = JSON.parse(result); // Parse the JSON result from Python
+      const recommendations = JSON.parse(result);
       console.log("Recommendations:", recommendations);
       res.json(recommendations);
     }
   });
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

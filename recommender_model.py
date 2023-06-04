@@ -3,8 +3,8 @@ from gensim.models import Word2Vec
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
-from .mean_embedding_vectorizer import MeanEmbeddingVectorizer
-from .tfidf_embedding_vectorizer import TfidfEmbeddingVectorizer
+from mean_embedding_vectorizer import MeanEmbeddingVectorizer
+from tfidf_embedding_vectorizer import TfidfEmbeddingVectorizer
 
 
 def get_recommendations(N, scores, recipes):
@@ -30,7 +30,7 @@ def get_recs(ingredients, N=5, mean=False):
     :param mean: False if using tfidf weighted embeddings, True if using simple mean
     """
     model = Word2Vec.load("model_cbow.bin")
-    model.init_sims(replace=True)
+    # model.init_sims(replace=True)
 
     with open("processed_recipes.json") as f:
         data = json.load(f)
